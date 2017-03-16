@@ -1,0 +1,14 @@
+{
+  "name": "SantimentBackend",
+  "version": "0.1.0",
+  "description": "Backend MVP for Santiment project <http://santiment.net>",
+  "repository": "https://github.com/santiment/santiment-backend",
+  "author": "",
+  "license": "MIT",
+  "private": true,
+    "dependencies": {
+  },
+  "devDependencies": {
+    "serverless":"1.9.0"
+  }
+}
