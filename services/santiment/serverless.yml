@@ -20,6 +20,7 @@ service: service
 provider:
   name: aws
   runtime: nodejs4.3
+  profile: santiment
 
 # you can overwrite defaults here
 #  stage: dev
@@ -55,16 +56,16 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  getSentiment:
+    handler: handler.getSentiment
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
-#    events:
-#      - http:
-#          path: users/create
-#          method: get
+    events:
+      - http:
+          path: sentiment
+          method: get
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)
 #      - sns: greeter-topic
@@ -85,6 +86,12 @@ functions:
 #    Define function environment variables here
 #    environment:
 #      variable2: value2
+  postSentiment:
+    handler: handler.postSentiment
+    events:
+      - http:
+          path: sentiment
+          method: post
 
 # you can add CloudFormation resource templates here
 #resources:
