@@ -1,4 +1,7 @@
+'use strict'
 // webpack.config.js
+
+let nodeExternals = require('webpack-node-externals')
 
 module.exports = {
   entry: './handler.js',
@@ -8,7 +11,8 @@ module.exports = {
       test: /\.js$/,
       loaders: ['babel-loader'],
       include: __dirname,
-      exclude: /node_modules/,
+      exclude: /node_modules/
     }]
-  }
+  },
+  externals: [nodeExternals()]
 };

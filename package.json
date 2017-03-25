@@ -13,11 +13,12 @@
     "eslint": "^3.18.0",
     "flow-bin": "^0.42.0",
     "serverless": "1.9.0",
-    "serverless-webpack": "^1.0.0-rc.4"
+    "serverless-webpack": "^1.0.0-rc.4",
+    "webpack-node-externals": "^1.5.4"
   },
   "scripts": {
     "deploy": "./deploy.sh",
-    "start":"./local_serve.sh",
-    "flow":"./flow.sh"
+    "start": "./local_serve.sh",
+    "flow": "./flow.sh"
   }
 }

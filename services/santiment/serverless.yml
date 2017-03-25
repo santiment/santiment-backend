@@ -23,13 +23,18 @@ provider:
   name: aws
   runtime: nodejs4.3
   profile: santiment
+  region: eu-central-1
 
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/*"  
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:ListBucket"
@@ -96,8 +101,26 @@ functions:
           method: post
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
+resources:
+  Resources:
+    sentimentLogTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: sentimentLogTable
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: receivedTimestamp
+            AttributeType: N
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: receivedTimestamp
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1    
+        
 #    NewResource:
 #      Type: AWS::S3::Bucket
 #      Properties:

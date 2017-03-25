@@ -1,19 +1,6 @@
 "use strict"
-
-module.exports.hello = (event, context, callback) => {
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: "Go Serverless v1.0! Your function executed successfully!",
-      input: event,
-    }),
-  }
-
-  callback(null, response)
-
-  // Use this code if you don"t use the http event with the LAMBDA-PROXY integration
-  // callback(null, { message: "Go Serverless v1.0! Your function executed successfully!", event })
-}
+let AWS = require('aws-sdk')
+let dynamoDB = new AWS.DynamoDB()
 
 module.exports.getSentiment = (event, context, callback) => {
   return callback(null, {
@@ -64,8 +51,39 @@ module.exports.getSentiment = (event, context, callback) => {
 }
 
 module.exports.postSentiment = (event, context, callback) => {
-  return callback(null, {
-    statusCode: 200,
-    body: JSON.stringify({})
+  let params = {
+    Item: {
+      userId: {
+        S:"abcde"
+      },
+      receivedTimestamp: {
+        N:Date.now().toString()
+      },
+      submittedTimestamp: {
+        S:Date.now().toString()
+      },
+      currency: {
+        S:"BTC"
+      },
+      sentiment: {
+        S:"bullish"
+      }
+    },
+    ReturnConsumedCapacity:"TOTAL",
+    TableName:"sentimentLogTable"
+  }
+  dynamoDB.putItem(params, (err,data)=>{
+    if(err) {
+      return callback(null, {
+        statusCode: 500,
+        body: JSON.stringify(err)
+      })
+    } else {
+      return callback(null, {
+        statusCode:200,
+        body: JSON.stringify(data)
+      })
+    }
   })
 }
+
