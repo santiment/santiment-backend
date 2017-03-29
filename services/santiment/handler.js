@@ -1,89 +1,138 @@
 "use strict"
-let AWS = require('aws-sdk')
+
+import moment from 'moment'
+import Future from 'fluture'
+import S from 'sanctuary'
+
+import Validation from 'folktale/data/validation'
+const Success = Validation.Success
+const Failure = Validation.Failure
+
+import {createSubmittedEvent,
+       createGetSentimentResponseItem,
+       validAssets,
+       validSentiments} from './types'
+
+import DB from './db'
+import AWS from 'aws-sdk'
+
 let dynamoDB = new AWS.DynamoDB()
 
-module.exports.getSentiment = (event, context, callback) => {
-  return callback(null, {
-    statusCode: 200,
-    body: JSON.stringify({
-      userId: "TESTUSER",
-      sentiment: [
-        {
-          id:"aaa",
-          asset:"BTC",
-          sentiment:"bullish",
-          date: "2017-03-16T23:23:41.229Z"
-        },
-        {
-          id:"bbb",
-          asset:"BTC",
-          sentiment:"bullish",
-          date: "2017-03-17T23:23:41.229Z"
-        },
-        {
-          id:"aAA",
-          asset:"ETH",
-          sentiment:"bearish",
-          date: "2017-03-14T23:23:41.229Z"
-        },
-        {
-          id:"EEE",
-          asset:"ETH",
-          sentiment:"bearish",
-          date: "2017-03-15T23:23:41.229Z"
-        },
-        {
-          id:"GGG",
-          asset:"ETH",
-          sentiment:"bearish",
-          date: "2017-03-16T23:23:41.229Z"
-        },
-        {
-          id:"ZZZ",
-          asset:"ETH",
-          sentiment:"bearish",
-          date: "2017-03-17T23:23:41.229Z"
-          
-        }
-      ]
-    })
-  })
+let db = DB(dynamoDB,console)
+
+// Validate the user input and pass the result forward
+function validateGetSentiment(event) {
+  //Retrieve the userID from the query string. If no user id given, return InvalidInputError
+  return ((event.queryStringParameters != null) && (event.queryStringParameters["userId"]))
+    ?Success(event.queryStringParameters["userId"])
+    :Failure("No userId given in query string")
 }
 
-module.exports.postSentiment = (event, context, callback) => {
-  let params = {
-    Item: {
-      userId: {
-        S:"abcde"
-      },
-      receivedTimestamp: {
-        N:Date.now().toString()
-      },
-      submittedTimestamp: {
-        S:Date.now().toString()
-      },
-      currency: {
-        S:"BTC"
-      },
-      sentiment: {
-        S:"bullish"
-      }
-    },
-    ReturnConsumedCapacity:"TOTAL",
-    TableName:"sentimentLogTable"
-  }
-  dynamoDB.putItem(params, (err,data)=>{
-    if(err) {
-      return callback(null, {
-        statusCode: 500,
-        body: JSON.stringify(err)
-      })
+function contains(array,item) {
+  return (array.indexOf(item) >=0)
+}
+function validatePostSentiment(event) {
+  let body = null
+  try {
+    console.log(event)
+    if(typeof event.body == 'string') {
+      body = JSON.parse(event.body)
     } else {
-      return callback(null, {
-        statusCode:200,
-        body: JSON.stringify(data)
-      })
+      body = event.body
     }
-  })
+  } catch(e) {
+    return Failure("Cannot parse body:"+event.body+" ERROR:"+e)
+  }
+
+  let validateUserId = (userId) => (userId)?Success(userId):Failure("No userId provided")
+  let validateAsset = (asset) => {
+    if (asset == null) {
+      return Failure("No asset provided")
+    }
+
+    return contains(validAssets,asset)
+      ?Success(asset)
+      :Failure("Invalid Asset provided. Valid options are:"+validAssets)
+  }
+
+  let validateSentiment = (sentiment) => {
+    if (sentiment == null) {
+      return Failure("No sentiment provided")
+    }
+
+    return contains(validSentiments,sentiment)
+      ?Success(sentiment)
+      :Failure("Invalid Sentiment provided. Valid options are:"+validSentiments)
+  }
+
+  let validateDate = (date) => {
+    if (date == null) {
+      return Failure("No date provided")
+    }
+    return moment(date,moment.ISO_8601,true).isValid()
+      ?Success(date)
+      :Failure("Date field is not a valid ISO_8601 date")
+  }
+
+  return Validation
+    .collect([
+      validateUserId(body.userId),
+      validateAsset(body.asset),
+      validateSentiment(body.sentiment),
+      validateDate(body.date)])
+     .map( _ => body)
 }
 
+
+function postSentiment (event, context, callback) {
+  validatePostSentiment(event)
+    .fold(Future.reject, Future.of) //Convert Validation to Future
+    .map(request=>createSubmittedEvent(request,new Date()))
+    .chain(db.logSentimentSubmittedEvent)
+    .fold((error)=> {
+      console.error(error)
+      return {
+        statusCode:500,
+        body:JSON.stringify(error)
+      }
+    }, ()=> {
+      return {
+        statusCode:200,
+        body:JSON.stringify({})
+      }
+    })
+    .fork((error)=> {
+      //This should never happen
+      throw error
+    }, (response)=> {
+      callback(null,response)
+    })
+}
+
+function getSentiment (event, context, callback) {
+  validateGetSentiment(event)
+    .fold(Future.reject,Future.of)
+    .chain(db.queryUserSentiment)
+    .fold(
+      (error)=> {
+        console.log(error)
+        return {
+          statusCode:500,
+          body: JSON.stringify(error)
+        }
+      },
+      (value)=> {
+        return {
+          statusCode: 200,
+          body: JSON.stringify(value.map(createGetSentimentResponseItem))
+        }
+      })
+    .fork((error)=> {
+      throw error
+    }, (response)=> {
+      callback(null,response)
+    })
+}
+         
+module.exports.getSentiment = getSentiment
+module.exports.postSentiment = postSentiment

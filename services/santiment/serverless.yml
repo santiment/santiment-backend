@@ -1,3 +1,4 @@
+
 # Welcome to Serverless!
 #
 # This file is the main config file for your service.
@@ -18,6 +19,7 @@ service: service
 # frameworkVersion: "=X.X.X"
 plugins:
   - serverless-webpack
+  - serverless-dynamodb-local
   
 provider:
   name: aws
@@ -111,7 +113,7 @@ resources:
           - AttributeName: userId
             AttributeType: S
           - AttributeName: receivedTimestamp
-            AttributeType: N
+            AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
@@ -129,3 +131,11 @@ resources:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+custom:
+  webpackIncludeModules: true
+  dynamodb:
+    start:
+      port: 8800
+      inMemory: true
+      migrate: true
+      seed: true

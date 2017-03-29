@@ -1,5 +1,12 @@
-{"name": "SentimentService",
+{
+  "name": "SentimentService",
   "dependencies": {
-    "aws-sdk": "^2.32.0"
+    "aws-sdk": "^2.32.0",
+    "fluture": "^5.0.0",
+    "folktale": "^2.0.0-alpha3",
+    "metamagical-interface": "^3.4.0",
+    "metamagical-repl": "^0.3.0",
+    "moment": "^2.18.1",
+    "sanctuary": "^0.12.2"
   }
 }
