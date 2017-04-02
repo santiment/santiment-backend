@@ -72,13 +72,12 @@ export default function DB(dynamoDB,logger) {
       
       return Future.node((done)=>dynamoDB.query(params,done))
       //Extract and values and transform them to an array of SentimentSubmittedEvent objects
-        .map(errorLogger)
         .chain( S.pipe([
           S.get(_=>true, "Items"),
-          S.map(S.pipe(S.map(transformItem))),
+          S.map(S.map(transformItem)),
           S.chain(S.sequence(S.Maybe)),
           S.reduce_((err,val)=>Future.of(val),
-                   Future.reject("Wrong DB response"))
+                    Future.reject("Wrong DB response"))
         ]))
                
           // let items = S.get(_=> true, "Items",response)
