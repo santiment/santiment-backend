@@ -46,6 +46,7 @@ testPostInvalidEntry(null)
 testPostInvalidEntry(123)
 testPostInvalidEntry({})
 testPostInvalidEntry({body:{}})
+testPostInvalidEntry({body:null})
 
 // We should allow arbitrary assets. Validation is client-side
 test("postSentiment post valid entry for arbitrary asset", (done)=>{

@@ -23,6 +23,9 @@ function validatePostSentiment(event) {
     if(typeof event.body === 'string') {
       body = JSON.parse(event.body)
     } else if(typeof event.body === 'object') {
+      if (event.body == null) {
+        event.body = {}
+      }
       body = event.body
     } else {
       return Failure("Invalid request body:"+event.body)
