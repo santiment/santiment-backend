@@ -9,8 +9,7 @@ import Validation from 'folktale/data/validation'
 const Success = Validation.Success
 const Failure = Validation.Failure
 
-import {validAssets,
-       validSentiments} from './types'
+import {validSentiments} from './types'
 
 import type {SubmitSentimentRequest, SentimentSubmittedEvent} from './types'
 
@@ -38,9 +37,7 @@ function validatePostSentiment(event) {
       return Failure("No asset provided")
     }
 
-    return contains(validAssets,asset)
-      ?Success(asset)
-      :Failure("Invalid Asset provided. Valid options are:"+validAssets)
+    return Success(asset)
   }
 
   let validateSentiment = (sentiment) => {
@@ -50,7 +47,7 @@ function validatePostSentiment(event) {
 
     return contains(validSentiments,sentiment)
       ?Success(sentiment)
-      :Failure("Invalid Sentiment provided. Valid options are:"+validSentiments)
+      :Failure("Invalid Sentiment provided. Valid options are:"+((validSentiments:any):string))
   }
 
   let validateDate = (date) => {
@@ -83,8 +80,8 @@ export function createSubmittedEvent(request: SubmitSentimentRequest, receivedTi
   }
 }
 
-export default function postSentiment(db){
-  return (event)=>{
+export default function postSentiment(db:any){
+  return (event:any)=>{
     return validatePostSentiment(event)
       .fold(Future.reject, Future.of) //Convert Validation to Future
       .map(request=>createSubmittedEvent(request,new Date()))

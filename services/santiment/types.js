@@ -8,8 +8,8 @@ export type SubmitSentimentRequest = {
   date: ISODateString
 }
 
-export type Asset = "ETH"|"BTC"
-export const validAssets = ["EUR","BTC"]
+export type Asset = String
+//export const validAssets = ["ETH","BTC"]
 
 export type Sentiment = "bullish|bearish|catish"
 export const validSentiments = ["bullish","bearish","catish"]

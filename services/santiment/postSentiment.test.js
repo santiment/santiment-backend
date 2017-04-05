@@ -46,3 +46,29 @@ testPostInvalidEntry(null)
 testPostInvalidEntry(123)
 testPostInvalidEntry({})
 testPostInvalidEntry({body:{}})
+
+// We should allow arbitrary assets. Validation is client-side
+test("postSentiment post valid entry for arbitrary asset", (done)=>{
+  const db = {
+    logSentimentSubmittedEvent:(e)=>{
+      expect(e).toMatchObject({
+        userId: userId,
+        asset: "I'm your new asset",
+        sentiment: sentiment,
+        submittedTimestamp: submittedTs
+      })
+      return Future.of({})
+    }
+  }
+  let body = {
+    userId:userId,
+    asset:"I'm your new asset",
+    sentiment:sentiment,
+    date:submittedTs.toISOString()}
+
+  postSentiment(db)({
+    body: JSON.stringify(body)
+  })
+    .chain(_=>postSentiment(db)({body:body}))
+    .fork( (error)=>{throw error}, done)
+})
