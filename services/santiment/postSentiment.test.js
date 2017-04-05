@@ -38,7 +38,12 @@ const testPostInvalidEntry = (event)=>{
     }
 
     postSentiment(db)(event)
-      .fork( done, (val)=>{throw val})
+      .fork( (err)=>{
+        expect(err).toMatchObject({
+          error:"InvalidInputError"
+        })
+        done()
+      }, (val)=>{throw val})
   })
 }
 

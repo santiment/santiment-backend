@@ -60,7 +60,15 @@ test("getSentiment non-empty result", (done)=>{
 const wrongInputTest = (input)=>{
   test("getSentiment wrong input", (done)=>{
     getSentiment({queryUserSentiment:()=>{throw new Error()}})(input)
-      .fork( (error)=> {done()}, (value)=>{throw value})
+      .fork( (error)=> {
+        expect(error).toEqual({
+          error:"InvalidInputError",
+          message: "Invalid input",
+          httpCode:400,
+          details:["Parameter 'userId' missing from query string"]
+        })
+        done()
+      }, (value)=>{throw value})
   })
 }
 
@@ -70,5 +78,4 @@ wrongInputTest(1)
 wrongInputTest({})
 wrongInputTest({queryStringParameters:null})
 wrongInputTest({queryStringParameters:{}})
-
 

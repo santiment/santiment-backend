@@ -1,7 +1,6 @@
 'use strict'
 import Future from 'fluture'
-import {create} from 'sanctuary'
-const S = create({checkTypes:false, env:[]})
+import S from './sanctuary'
 
 
 // DB::(DynamoDB,Logger)=>Module

@@ -1,14 +1,17 @@
 "use strict"
 /* @flow */
-import S from 'sanctuary'
+
+import S from './sanctuary'
 
 import Validation from 'folktale/data/validation'
+import Future from 'fluture'
 const Success = Validation.Success
 const Failure = Validation.Failure
 
-import Future from 'fluture'
+//import Future from 'fluture'
 
 import type {SentimentSubmittedEvent,GetSentimentResponseItem} from './types'
+import * as err from './errors'
 
 function createGetSentimentResponseItem(event: SentimentSubmittedEvent): GetSentimentResponseItem {
   return {
@@ -28,14 +31,15 @@ function validateGetSentiment(event) {
     }
   }
   catch (e) {}
-  return Failure("No userId given in query string")
+  return Failure(["Parameter 'userId' missing from query string"])
 }
 
 
 export default function getSentiment (db:any){
   return (event:any)=> {
     return validateGetSentiment(event)
-      .fold(Future.reject,Future.of)
+      .fold(S.pipe([err.InvalidInputError, Future.reject]),
+            Future.of)
       .chain(db.queryUserSentiment)
       .map(S.map(createGetSentimentResponseItem))
   }
