@@ -102,6 +102,13 @@ functions:
           path: sentiment
           method: post
 
+  getAggregateSentiment:
+    handler: handler.getAggregateSentiment
+    events:
+      - http:
+          path: sentiment/aggregate
+          method: get
+
 # you can add CloudFormation resource templates here
 resources:
   Resources:
@@ -114,6 +121,10 @@ resources:
             AttributeType: S
           - AttributeName: receivedTimestamp
             AttributeType: S
+          - AttributeName: asset
+            AttributeType: S
+          - AttributeName: submittedTimestamp
+            AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
@@ -121,8 +132,20 @@ resources:
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
-          WriteCapacityUnits: 1    
-        
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: SentimentByAssetIndex
+            KeySchema:
+              - AttributeName: asset
+                KeyType: HASH
+              - AttributeName: submittedTimestamp
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 2
+              WriteCapacityUnits: 2
+
 #    NewResource:
 #      Type: AWS::S3::Bucket
 #      Properties:

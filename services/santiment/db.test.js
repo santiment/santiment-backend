@@ -146,3 +146,72 @@ test("queryUserSentiment wrong query result", (done)=>{
       throw value
   });
 });
+
+test("getSentimentPerAsset", (done)=>{
+  let mockIface = {
+    query: (params,done)=>{
+      expect(params).toEqual({
+        TableName: "sentimentLogTable",
+        IndexName: "SentimentByAssetIndex",
+        ConsistentRead: false,
+        ExpressionAttributeValues: {
+          ":asset" : {
+            S: "ETC_USD"
+          },
+          ":from": {
+            S: "2017-05-01"
+          },
+          ":to": {
+            S: "2017-05-03"
+          }
+        },
+        KeyConditionExpression: "asset = :userId and submittedTimestamp between :from and :to"
+      })
+      return done(null,{Items:[
+        {
+          userId: {S: user},
+          receivedTimestamp: {S: "2017-05-01T11:11:11Z"},
+          submittedTimestamp: {S: "2017-05-01T11:11:11Z"},
+          asset: {S: "ETC_USD"},
+          sentiment: {S: "bullish"}
+        },
+        {
+          userId: {S: user},
+          receivedTimestamp: {S: "2017-05-01T11:11:11Z"},
+          submittedTimestamp: {S: "2017-05-01T12:11:11Z"},
+          asset: {S: "ETC_USD"},
+          sentiment: {S: "bullish"}
+        },
+        {
+          userId: {S: user},
+          receivedTimestamp: {S: "2017-05-01T11:11:11Z"},
+          submittedTimestamp: {S: "2017-05-01T11:12:11Z"},
+          asset: {S: "ETC_USD"},
+          sentiment: {S: "bearish"}
+        },
+        {
+          userId: {S: user},
+          receivedTimestamp: {S: "2017-05-02T11:11:11Z"},
+          submittedTimestamp: {S: "2017-05-02T11:11:11Z"},
+          asset: {S: "ETC_USD"},
+          sentiment: {S: "bullish"}
+        }]})
+    }
+  }
+  let db = DB(mockIface, console)
+  
+  db.getSentimentPerAsset("ETC_USD","2017-05-01","2017-05-03").fork((err)=>{throw err}, (value)=>{
+    expect(value).toEqual({
+      "2017-05-01":{
+        bullish:2,
+        bearish:1,
+        catish:0
+      },
+      "2017-05-02":{
+        bullish:1,
+        catish:0,
+        bearish:0
+      }})
+    done()
+  })
+});
