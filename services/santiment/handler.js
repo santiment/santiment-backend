@@ -8,8 +8,10 @@ let db = DB(dynamoDB,console)
 
 import getSentiment from './getSentiment'
 import postSentiment from './postSentiment'
+import getAggregateSentiment from './getAggregateSentiment'
 import {createLambda} from './lambda'
 
          
 module.exports.getSentiment = createLambda(getSentiment(db))
 module.exports.postSentiment = createLambda(postSentiment(db))
+module.exports.getAggregateSentiment = createLambda(getAggregateSentiment(db))
