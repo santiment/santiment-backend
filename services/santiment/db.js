@@ -14,6 +14,11 @@ export default function DB(dynamoDB,logger) {
     return error
   }
 
+  const trace = (label)=>(value)=>{
+    logger.info(label,JSON.stringify(value))
+    return value
+  }
+
   function transformSentimentLogQueryItem(x){
     //TODO how to handle invalid items?
     try {
@@ -32,12 +37,15 @@ export default function DB(dynamoDB,logger) {
   }
 
   function queryMapReduce (params,mapTransform,reduceTransform){
+    trace("queryMapReduce:")(params)
     return Future.node(done=>dynamoDB.query(params,done))
       .chain(S.pipe([
+        trace("query result:"),
         S.get(_=>true, "Items"),
         S.map(S.map(mapTransform)),
         S.chain(S.sequence(S.Maybe)),
         S.map(reduceTransform),
+        trace("map-reduce result:"),
         S.reduce_((err,val)=>Future.of(val),
                   Future.reject("Wrong DB response"))
       ]))
@@ -103,7 +111,7 @@ export default function DB(dynamoDB,logger) {
             S: to
           }
         },
-        KeyConditionExpression: "asset = :userId and submittedTimestamp between :from and :to"
+        KeyConditionExpression: "asset = :asset and submittedTimestamp between :from and :to"
       }
 
       let aggregateItem = (current)=>(item)=>{
