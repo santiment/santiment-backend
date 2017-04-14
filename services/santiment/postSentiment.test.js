@@ -98,7 +98,7 @@ test("postSentiment post valid entry with price", (done)=>{
     asset:asset,
     sentiment:sentiment,
     date:submittedTs.toISOString(),
-    price:1000
+    price:"1000"
   }
 
 

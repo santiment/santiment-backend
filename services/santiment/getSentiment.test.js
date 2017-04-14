@@ -81,4 +81,3 @@ wrongInputTest(1)
 wrongInputTest({})
 wrongInputTest({queryStringParameters:null})
 wrongInputTest({queryStringParameters:{}})
-
