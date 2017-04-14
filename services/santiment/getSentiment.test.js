@@ -1,6 +1,7 @@
 
 import getSentiment from './getSentiment'
 import Future from 'fluture'
+import S from './sanctuary'
 
 let user = 'user',
     receivedTs = new Date(),
@@ -35,6 +36,7 @@ test("getSentiment non-empty result", (done)=>{
         receivedTimestamp: receivedTs,
         submittedTimestamp: submittedTs,
         asset: asset,
+        price: S.Just("1000"),
         sentiment: sentiment
       }])
     }
@@ -49,7 +51,8 @@ test("getSentiment non-empty result", (done)=>{
       id: user+'/'+receivedTs.toISOString(),
       date: submittedTs.toISOString(),
       asset: asset,
-      sentiment: sentiment
+      sentiment: sentiment,
+      price: "1000"
     }
     ])
     done()

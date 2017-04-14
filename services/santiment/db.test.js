@@ -1,4 +1,5 @@
 import DB from './db'
+import S from './sanctuary'
 
 test("jest is workig", ()=>{})
 
@@ -36,7 +37,7 @@ test("logSentimentSubmittedEvent", done=>{
       done(null, {})
     }
   }
-  
+
   let db = DB(mockIface, console)
 
   db.logSentimentSubmittedEvent({
@@ -44,7 +45,55 @@ test("logSentimentSubmittedEvent", done=>{
     receivedTimestamp: ts1,
     submittedTimestamp: ts2,
     asset:"BTC",
-    sentiment:"bullish"
+    sentiment:"bullish",
+    price: S.Nothing
+  })
+    .fork((err)=>{throw err}, (value)=>{
+      expect(value).toEqual({})
+      done()
+    })
+});
+
+test("logSentimentSubmittedEvent with price", done=>{
+
+  let mockIface = {
+    putItem: (params,done) => {
+      expect(params).toEqual({
+        Item: {
+          userId: {
+            S: user
+          },
+          receivedTimestamp: {
+            S: ts1.toISOString()
+          },
+          submittedTimestamp: {
+            S: ts2.toISOString()
+          },
+          asset: {
+            S: asset
+          },
+          sentiment: {
+            S: sentiment
+          },
+          price: {
+            S: "1000"
+          }
+        },
+        TableName:"sentimentLogTable"
+      })
+      done(null, {})
+    }
+  }
+
+  let db = DB(mockIface, console)
+
+  db.logSentimentSubmittedEvent({
+    userId:"TESTUSER",
+    receivedTimestamp: ts1,
+    submittedTimestamp: ts2,
+    asset:"BTC",
+    sentiment:"bullish",
+    price: S.Just("1000")
   })
     .fork((err)=>{throw err}, (value)=>{
       expect(value).toEqual({})
@@ -67,7 +116,7 @@ test("queryUserSentiment empty query", (done)=>{
         KeyConditionExpression: "userId = :userId",
         ScanIndexForward: false
       })
-      
+
       return done(null, {Items:[]})
     }
   }
@@ -93,7 +142,7 @@ test("queryUserSentiment 1 item query", (done)=>{
         KeyConditionExpression: "userId = :userId",
         ScanIndexForward: false
       })
-      
+
       return done(null, {Items:[
         {
           userId: {S: user},
@@ -108,7 +157,7 @@ test("queryUserSentiment 1 item query", (done)=>{
 
   let db = DB(mockIface, console)
   db.queryUserSentiment(user).fork( (err)=>{throw err}, (value)=>{
-    expect(value).toEqual([{
+    expect(value).toMatchObject([{
       userId: user,
       receivedTimestamp: ts1,
       submittedTimestamp: ts2,
@@ -134,7 +183,7 @@ test("queryUserSentiment wrong query result", (done)=>{
         KeyConditionExpression: "userId = :userId",
         ScanIndexForward: false
       })
-      
+
       return done(null, {Items:[{}]})
     }
   }
@@ -199,7 +248,7 @@ test("getSentimentPerAsset", (done)=>{
     }
   }
   let db = DB(mockIface, console)
-  
+
   db.getSentimentPerAsset("ETC_USD","2017-05-01","2017-05-03").fork((err)=>{throw err}, (value)=>{
     expect(value).toEqual({
       "2017-05-01":{
@@ -299,7 +348,7 @@ test("Hang error case", (done)=>{
     }
   }
   let db = DB(mockIface, console)
-  
+
   db.getSentimentPerAsset("TESTASSET","2017-01-01","2017-05-01").fork((err)=>{throw err}, (value)=>{
     expect(value).toEqual({
       "2017-04-01":{
@@ -310,5 +359,3 @@ test("Hang error case", (done)=>{
     done()
   })
 });
-  
-    

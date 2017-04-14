@@ -18,7 +18,8 @@ function createGetSentimentResponseItem(event: SentimentSubmittedEvent): GetSent
     id: event.userId+"/"+event.receivedTimestamp.toISOString(),
     date: event.submittedTimestamp.toISOString(),
     asset: event.asset,
-    sentiment: event.sentiment
+    sentiment: event.sentiment,
+    price: S.maybeToNullable(event.price)
   }
 }
 

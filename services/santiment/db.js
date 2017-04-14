@@ -19,6 +19,14 @@ export default function DB(dynamoDB,logger) {
     return value
   }
 
+  function getPriceFromQueryItem(x) {
+    console.log("AAA",x)
+    if(x["price"] != null)
+      return S.Just(x["price"].S)
+    else
+      return S.Nothing
+  }
+
   function transformSentimentLogQueryItem(x){
     //TODO how to handle invalid items?
     try {
@@ -26,6 +34,7 @@ export default function DB(dynamoDB,logger) {
         userId:x.userId.S,
         receivedTimestamp: new Date(x.receivedTimestamp.S),
         submittedTimestamp: new Date(x.submittedTimestamp.S),
+        price: getPriceFromQueryItem(x),
         asset: x.asset.S,
         sentiment: x.sentiment.S
       })
@@ -54,6 +63,12 @@ export default function DB(dynamoDB,logger) {
   return {
     // logSentimentSubmittedEvent::SentimentSubmittedEvent=>Future<void>
     logSentimentSubmittedEvent(event) {
+
+      let maybeAddPrice= S.reduce((item)=>(price)=>{
+        item.price = {S:price}
+        return item
+      })
+
       let params = {
         Item: {
           userId: {
@@ -74,6 +89,9 @@ export default function DB(dynamoDB,logger) {
         },
         TableName:sentimentLogTable
       }
+      //Add price if given
+      params.Item = maybeAddPrice(params.Item)(event.price)
+
       return Future.node( (done)=>dynamoDB.putItem(params,done))
         .mapRej(errorLogger)
     },
@@ -127,7 +145,7 @@ export default function DB(dynamoDB,logger) {
         current[date_str][item.sentiment]+=1
         return current
       }
-      
+
       let aggregateSentiment = S.reduce(aggregateItem,{})
 
       return queryMapReduce(params,transformSentimentLogQueryItem, aggregateSentiment)

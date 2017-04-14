@@ -1,5 +1,6 @@
 import Future from 'fluture'
 import postSentiment from './postSentiment'
+import S from './sanctuary'
 
 const userId = 'user',
       asset = 'BTC',
@@ -71,6 +72,35 @@ test("postSentiment post valid entry for arbitrary asset", (done)=>{
     asset:"I'm your new asset",
     sentiment:sentiment,
     date:submittedTs.toISOString()}
+
+  postSentiment(db)({
+    body: JSON.stringify(body)
+  })
+    .chain(_=>postSentiment(db)({body:body}))
+    .fork( (error)=>{throw error}, done)
+})
+
+test("postSentiment post valid entry with price", (done)=>{
+  const db = {
+    logSentimentSubmittedEvent:(e)=>{
+      expect(e).toMatchObject({
+        userId: userId,
+        asset: asset,
+        sentiment: sentiment,
+        submittedTimestamp: submittedTs
+      })
+      expect(S.fromMaybe(null,e.price)).toEqual("1000")
+      return Future.of({})
+    }
+  }
+  let body = {
+    userId:userId,
+    asset:asset,
+    sentiment:sentiment,
+    date:submittedTs.toISOString(),
+    price:1000
+  }
+
 
   postSentiment(db)({
     body: JSON.stringify(body)

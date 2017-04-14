@@ -74,10 +74,11 @@ function validatePostSentiment(event) {
 
 export function createSubmittedEvent(request: SubmitSentimentRequest, receivedTimestamp: Date): SentimentSubmittedEvent {
   const submitted = new Date(Date.parse(request.date))
-  
+  const price = S.map( S.toString, S.toMaybe(request.price))
   return {
     userId: request.userId,
     asset: request.asset,
+    price: price,
     receivedTimestamp: receivedTimestamp,
     submittedTimestamp: submitted,
     sentiment: request.sentiment
