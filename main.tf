@@ -62,7 +62,7 @@ resource "aws_key_pair" "trollbox_client" {
   public_key = "${file(var.public_key_path)}"
 }
 
-resource "aws_instance" "trollox_client" {
+resource "aws_instance" "trollbox_client" {
   #NixOS 17.03 EBS instance (eu-central-1)
   ami           = "ami-5450803b"
   instance_type = "t2.micro"
@@ -75,4 +75,13 @@ resource "aws_instance" "trollox_client" {
   # environment it's more common to have a separate private subnet for
   # backend instances.
   subnet_id = "${aws_subnet.default.id}"
+
+  # The connection used for provisioning
+  # provisioner "local-exec" {
+  #   command = "./trollbox_client_provision.sh ${aws_instance.trollbox_client.public_ip}"
+  # }
+}
+
+output "trollbox_client_ip" {
+  value = "${aws_instance.trollbox_client.public_ip}"
 }
