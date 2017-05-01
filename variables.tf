@@ -14,3 +14,13 @@ Example: ~/.ssh/terraform
 DESCRIPTION
   default = "terraform_rsa"
 }
+
+variable "volume_size_root" {
+  default = 10
+  description = "Size of the root volume of each ElastiSearch server in GB"
+}
+
+variable "volume_size_data" {
+  default = 100
+  description = "Size of the data volume of each ElasticSearch server in GB"
+}
