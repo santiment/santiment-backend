@@ -120,6 +120,53 @@ resource "aws_security_group" "es" {
   }
 }
 
+resource "aws_security_group" "elb" {
+  name = "elasticsearch-lb"
+  description = "Allows the load balancer to communicate with Elasticsearch nodes"
+
+  vpc_id = "${aws_vpc.default.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group_rule" "elb_default" {
+  type        = "ingress"
+  from_port   = 9200
+  to_port     = 9200
+  protocol    = "tcp"
+  cidr_blocks = ["10.0.0.0/16"]
+  security_group_id = "${aws_security_group.elb.id}"
+}
+
+resource "aws_security_group_rule" "elb_http" {
+  type        = "ingress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  cidr_blocks = ["10.0.0.0/16"]
+  security_group_id = "${aws_security_group.elb.id}"
+}
+
+resource "aws_security_group_rule" "elb_https" {
+  type        = "ingress"
+  from_port   = 443
+  to_port     = 443
+  protocol    = "tcp"
+  cidr_blocks = ["10.0.0.0/16"]
+  security_group_id = "${aws_security_group.elb.id}"
+}
+
+resource "aws_security_group_rule" "elb_es" {
+  type        = "egress"
+  from_port   = 9200
+  to_port     = 9200
+  protocol    = "tcp"
+  source_security_group_id = "${aws_security_group.es.id}"
+  security_group_id = "${aws_security_group.elb.id}"
+}
+
 resource "aws_key_pair" "trollbox_client" {
   key_name   = "trollbox_client_key"
   public_key = "${file(var.public_key_path)}"
@@ -271,6 +318,40 @@ resource "aws_instance" "elastic_search_server" {
 
 }
 
+resource "aws_elb" "es" {
+  connection_draining = true
+  cross_zone_load_balancing = true
+
+  name = "elasticsearch-elb"
+  subnets = ["${aws_subnet.default.id}"]
+  internal = true
+
+  security_groups = ["${aws_security_group.elb.id}"]
+  instances = ["${aws_instance.elastic_search_server.*.id}"]
+
+  listener {
+    instance_port     = 9200
+    instance_protocol = "http"
+    lb_port           = 80
+    lb_protocol       = "http"
+  }
+
+  listener {
+    instance_port     = 9200
+    instance_protocol = "http"
+    lb_port           = 9200
+    lb_protocol       = "http"
+  }
+
+  health_check {
+    target              = "HTTP:9200/_cluster/health"
+    healthy_threshold   = 10
+    unhealthy_threshold = 10
+    interval            = 300
+    timeout             = 60
+  }
+}
+
 
 output "trollbox_client_ip" {
   value = "${aws_instance.trollbox_client.public_ip}"
@@ -278,4 +359,8 @@ output "trollbox_client_ip" {
 
 output "elastic_private_ip" {
   value = ["${aws_instance.elastic_search_server.*.private_ip}"]
+}
+
+output "elasticsearch_elb_dns" {
+  value = "${aws_elb.es.dns_name}"
 }
