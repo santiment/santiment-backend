@@ -1,6 +1,7 @@
 {config, pkgs, ...}:
 let
   nodejs = pkgs.nodejs;
+  vars = import /etc/nixos/vars.nix;
 #   trollbox_package = {stdenv, nodejs, coreutils, R}:
 #     stdenv.mkDerivation {
 #       name = "trollbox_client-0.1";
@@ -40,9 +41,16 @@ in
     description = "Trollbox client";
     after = ["multi-user.target"];
     enable = true;
+    environment = {
+      TC_ELASTICSEARCH_API_VERSION = "5.3";
+      TC_ELASTICSEARCH_PORT = "9200";
+      TC_POLONIEX_WEBSOCKET_URL = "wss://api.poloniex.com";
+      TC_ELASTICSEARCH_HOST = vars.elasticsearchHost;
+    };
+
     serviceConfig = {
-      ExecStart="${nodejs}/bin/node /home/trollbox_client/santiment/trollbox_backend/main.js";
-      WorkingDirectory=/home/trollbox_client/santiment/trollbox_backend;  # Required on some systems
+      ExecStart="${nodejs}/bin/node /home/trollbox_client/trollbox-client/main.js";
+      WorkingDirectory=/home/trollbox_client/trollbox-client;  # Required on some systems
       Restart="always";
       RestartSec=10;                       # Restart service after 10 seconds if node service crashes
       StandardOutput="syslog";               # Output to syslog
@@ -51,6 +59,7 @@ in
       User="trollbox_client";
       #Group=<alternate group>
       Environment="NODE_ENV=production";
+
     };
   };
 }
