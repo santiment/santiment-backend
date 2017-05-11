@@ -309,6 +309,8 @@ resource "aws_instance" "elastic_search_server" {
     Name = "elasticsearch-${count.index}"
   }
 
+  #associate_public_ip_address = false
+
   lifecycle {
     create_before_destroy = true
   }
@@ -363,4 +365,12 @@ output "elastic_private_ip" {
 
 output "elasticsearch_elb_dns" {
   value = "${aws_elb.es.dns_name}"
+}
+
+output "default_security_group_id" {
+  value = "${aws_security_group.default.id}"
+}
+
+output "default_subnet_id" {
+  value = "${aws_subnet.default.id}"
 }

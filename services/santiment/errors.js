@@ -14,11 +14,11 @@ const server = {
 
 const makeError = (errorObject)=>(details)=>Object.assign({details:details},errorObject)
 
-export const InvalidInputError = makeError(invalidInput)
-export const ServerError = makeError(server)
+exports.InvalidInputError = makeError(invalidInput)
+exports.ServerError = makeError(server)
 
-export const httpStatusCode = (e)=>e.httpCode
-export const httpBody = (e)=>JSON.stringify({
+exports.httpStatusCode = (e)=>e.httpCode
+exports.httpBody = (e)=>JSON.stringify({
   error:e.error,
   message:e.message,
   details: e.details

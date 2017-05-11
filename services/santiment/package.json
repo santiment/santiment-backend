@@ -1,14 +1,17 @@
 {
   "name": "SentimentService",
-  "devDependencies":{
+  "version": "v1.1"
+  "devDependencies": {
     "aws-sdk": "^2.41.0"
   },
   "dependencies": {
+    "elasticsearch": "^13.0.1",
     "fluture": "^5.0.0",
     "folktale": "^2.0.0-alpha4",
     "metamagical-interface": "^3.4.0",
     "metamagical-repl": "^0.3.0",
     "moment": "^2.18.1",
+    "ramda": "^0.23.0",
     "sanctuary": "^0.12.2"
   }
 }

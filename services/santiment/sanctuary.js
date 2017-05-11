@@ -13,4 +13,4 @@ const FutureType = $.BinaryType(
   Future.extractRight
 );
 
-export default create({checkTypes: false, env: env.concat([FutureType])});
+module.exports = create({checkTypes: false, env: env.concat([FutureType])});

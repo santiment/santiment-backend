@@ -43,5 +43,5 @@ git fetch --all
 git checkout --force ${TARGET}
 
 yarn install
-systemctl start trollbox_client
+systemctl restart trollbox_client
 EOF
