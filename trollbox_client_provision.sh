@@ -11,7 +11,7 @@ then
     ELASTICSEARCH_HOST=http://`terraform output elasticsearch_elb_dns`
 fi
 
-TARGET=v1.0.0 #Commit that needs to be deployed
+TARGET=v1.0.1 #Commit that needs to be deployed
 echo Provisioning machine ${TROLLBOXIP} with target \'${TARGET}\'
 
 echo Copying config to remote machine
