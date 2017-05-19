@@ -1,0 +1,6 @@
+const es = require('elasticsearch')
+const e = require('../elasticsearch')
+const z = e({elasticsearch:es,host:"http://localhost:9200",apiVersion:"5.3"})
+const g = require('../getFeed')
+const zz = g(z)
+zz({queryStringParameters:{keyword:"and"}}).fork(console.error,console.log)
