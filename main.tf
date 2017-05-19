@@ -190,6 +190,12 @@ resource "aws_instance" "trollbox_client" {
   # provisioner "local-exec" {
   #   command = "./trollbox_client_provision.sh ${aws_instance.trollbox_client.public_ip}"
   # }
+  root_block_device {
+    volume_type           = "gp2"
+    volume_size           = "8"
+    delete_on_termination = true
+  }
+
 }
 
 resource "aws_iam_policy" "es" {
@@ -268,7 +274,7 @@ resource "aws_instance" "elastic_search_server" {
   count = 3
   #Ubuntu Server 16.04 LTS (HVM), SSD Volume Type
   ami           = "ami-060cde69"
-  instance_type = "m4.large"
+  instance_type = "t2.small"
   key_name = "${aws_key_pair.trollbox_client.id}"
 
   # Our Security group to allow HTTP and SSH access

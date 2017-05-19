@@ -44,7 +44,7 @@ in
     environment = {
       TC_ELASTICSEARCH_API_VERSION = "5.3";
       TC_ELASTICSEARCH_PORT = "9200";
-      TC_POLONIEX_WEBSOCKET_URL = "wss://api.poloniex.com";
+      TC_POLONIEX_WEBSOCKET_URL = "wss://api2.poloniex.com:443";
       TC_ELASTICSEARCH_HOST = vars.elasticsearchHost;
     };
 

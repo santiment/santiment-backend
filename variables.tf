@@ -21,6 +21,6 @@ variable "volume_size_root" {
 }
 
 variable "volume_size_data" {
-  default = 100
+  default = 10
   description = "Size of the data volume of each ElasticSearch server in GB"
 }

@@ -11,7 +11,7 @@ then
     ELASTICSEARCH_HOST=http://`terraform output elasticsearch_elb_dns`
 fi
 
-TARGET=v1.0.1 #Commit that needs to be deployed
+TARGET=v1.1.0 #Commit that needs to be deployed
 echo Provisioning machine ${TROLLBOXIP} with target \'${TARGET}\'
 
 echo Copying config to remote machine
@@ -37,9 +37,8 @@ nixos-rebuild switch
 systemctl stop trollbox_client #Stop the client before updating
 cd /home/trollbox_client
 
-git clone --depth 1 git@github.com:santiment/trollbox-client.git
+git clone git@github.com:santiment/trollbox-client.git
 cd trollbox-client
-git fetch --all
 git checkout --force ${TARGET}
 
 yarn install
