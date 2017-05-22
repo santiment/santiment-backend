@@ -1,7 +1,17 @@
+terraform {
+  backend "s3" {
+    bucket = "santiment-private"
+    key = "terraform/terraform.tfstate"
+    region = "eu-central-1"
+    profile = "santiment"
+  }
+}
+
 provider "aws" {
   region     = "eu-central-1"
   profile = "santiment"
 }
+
 
 # Create a VPC to launch our instances into
 resource "aws_vpc" "default" {
