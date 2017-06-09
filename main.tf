@@ -17,6 +17,6 @@ data "terraform_remote_state" "lambda" {
   }
 }
 
-output "sentiment_url" {
-  value = "${data.terraform_remote_state.lambda.sentiment_path}"
+output "base_url" {
+  value = "${data.terraform_remote_state.lambda.base_url}"
 }
