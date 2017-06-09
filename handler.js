@@ -1,5 +1,5 @@
 "use strict"
-
+console.log("AAAAAAAAAAAAAAAAAAAAA")
 import {merge} from 'ramda'
 
 const defaultConfig = {
@@ -12,11 +12,11 @@ const config = merge(defaultConfig, process.env)
 
 import AWS from 'aws-sdk'
 
-import DB from './db'
+import DB from './lib/db'
 let dynamoDB = new AWS.DynamoDB()
 let db = DB(dynamoDB,console)
 
-import ESFactory from './elasticsearch'
+import ESFactory from './lib/elasticsearch'
 import elasticsearch from 'elasticsearch'
 
 const esUrl = config.ELASTICSEARCH_HOST + ":" + config.ELASTICSEARCH_PORT
@@ -30,14 +30,14 @@ const esIface = ESFactory({
 
 
 
-import getSentiment from './getSentiment'
-import postSentiment from './postSentiment'
-import getAggregateSentiment from './getAggregateSentiment'
-import getFeed from './getFeed'
-import {createLambda} from './lambda'
+import getSentiment from './lib/getSentiment'
+import postSentiment from './lib/postSentiment'
+import getAggregateSentiment from './lib/getAggregateSentiment'
+import getFeed from './lib/getFeed'
+import {createLambda} from './lib/lambda'
 
 
 module.exports.getSentiment = createLambda(getSentiment(db))
 module.exports.postSentiment = createLambda(postSentiment(db))
-module.exports.getAggregateSentiment = createLambda(getAggregateSentiment(db))
+module.exports.getSentimentAggregate = createLambda(getAggregateSentiment(db))
 module.exports.getFeed = createLambda(getFeed(esIface))

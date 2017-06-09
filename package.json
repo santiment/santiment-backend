@@ -1,35 +1,23 @@
 {
-  "name": "SantimentBackend",
-  "version": "0.1.0",
-  "description": "Backend MVP for Santiment project <http://santiment.net>",
-  "repository": "https://github.com/santiment/santiment-backend",
-  "author": "",
-  "license": "MIT",
-  "private": true,
+  "name": "SentimentService",
+  "version": "v1.1",
   "devDependencies": {
-    "babel-core": "^6.24.0",
-    "babel-jest": "^19.0.0",
-    "babel-loader": "^6.4.1",
+    "aws-sdk": "^2.41.0",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
     "babel-plugin-syntax-flow": "^6.18.0",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-preset-es2015": "^6.24.0",
-    "babel-preset-flow": "^6.23.0",
-    "eslint": "^3.18.0",
-    "flow-bin": "^0.42.0",
-    "jest-cli": "^19.0.2",
-    "serverless": "1.9.0",
-    "serverless-dynamodb-local": "^0.2.20",
-    "serverless-webpack": "^1.0.0-rc.4",
-    "webpack-node-externals": "^1.5.4"
+    "babel-preset-es2015": "^6.24.1",
+    "webpack-node-externals": "^1.6.0"
   },
-  "scripts": {
-    "deploy": "./deploy.sh",
-    "start": "./local_serve.sh",
-    "flow": "./flow.sh",
-    "test": "jest"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "testEnvironment": "node"
+  "dependencies": {
+    "elasticsearch": "^13.0.1",
+    "fluture": "^5.0.0",
+    "folktale": "^2.0.0-alpha4",
+    "metamagical-interface": "^3.4.0",
+    "metamagical-repl": "^0.3.0",
+    "moment": "^2.18.1",
+    "ramda": "^0.23.0",
+    "sanctuary": "^0.12.2"
   }
 }
