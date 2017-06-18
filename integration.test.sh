@@ -18,4 +18,4 @@ EOF
 
 curl -X GET "$URL/sentiment?userId=INTEGRATION_TEST_USER"
 curl -X GET "$URL/sentiment/aggregate?asset=BTC_USD&from=2017-01-01&to=2017-12-31"
-curl -X GET "$URL/feed?source=trollbox&keyword=eth"
+curl -X GET "$URL/feed?source=btce&keyword=eth"

@@ -37,3 +37,7 @@ aws lambda update-function-code --function-name stage-postSentiment\
 aws lambda update-function-code --function-name stage-getSentimentAggregate\
     --s3-bucket santiment-private\
     --s3-key lambda/stage/lambda.zip
+
+aws lambda update-function-code --function-name stage-getFeed\
+    --s3-bucket santiment-private\
+    --s3-key lambda/stage/lambda.zip
