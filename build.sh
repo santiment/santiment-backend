@@ -2,6 +2,10 @@
 
 set -e
 
+if [ -z "$ENV" ]; then
+    ENV=stage
+fi
+
 echo "Building lambda.zip"
 
 src=`pwd`
@@ -24,20 +28,20 @@ echo `pwd`
 zip -r9 $out "."
 #rm -rf $tmp
 
-aws s3 cp $out s3://santiment-private/lambda/stage/lambda.zip
+aws s3 cp $out s3://santiment-private/lambda/${ENV}/lambda.zip
 
-aws lambda update-function-code --function-name stage-getSentiment\
+aws lambda update-function-code --function-name ${ENV}-getSentiment\
     --s3-bucket santiment-private\
-    --s3-key lambda/stage/lambda.zip
+    --s3-key lambda/${ENV}/lambda.zip
 
-aws lambda update-function-code --function-name stage-postSentiment\
+aws lambda update-function-code --function-name ${ENV}-postSentiment\
     --s3-bucket santiment-private\
-    --s3-key lambda/stage/lambda.zip
+    --s3-key lambda/${ENV}/lambda.zip
 
-aws lambda update-function-code --function-name stage-getSentimentAggregate\
+aws lambda update-function-code --function-name ${ENV}-getSentimentAggregate\
     --s3-bucket santiment-private\
-    --s3-key lambda/stage/lambda.zip
+    --s3-key lambda/${ENV}/lambda.zip
 
-aws lambda update-function-code --function-name stage-getFeed\
+aws lambda update-function-code --function-name ${ENV}-getFeed\
     --s3-bucket santiment-private\
-    --s3-key lambda/stage/lambda.zip
+    --s3-key lambda/${ENV}/lambda.zip

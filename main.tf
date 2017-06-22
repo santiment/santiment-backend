@@ -7,16 +7,30 @@ provider "aws" {
   profile = "santiment"
 }
 
-data "terraform_remote_state" "lambda" {
+data "terraform_remote_state" "lambda_stage" {
   backend = "s3"
   config {
     bucket = "santiment-private"
-    key = "terraform/${var.env}/lambda/terraform.tfstate"
+    key = "terraform/stage/lambda/terraform.tfstate"
     region = "eu-central-1"
     profile = "santiment"
   }
 }
 
-output "base_url" {
-  value = "${data.terraform_remote_state.lambda.base_url}"
+data "terraform_remote_state" "lambda_production" {
+  backend = "s3"
+  config {
+    bucket = "santiment-private"
+    key = "terraform/production/lambda/terraform.tfstate"
+    region = "eu-central-1"
+    profile = "santiment"
+  }
+}
+
+output "stage_base_url" {
+  value = "${data.terraform_remote_state.lambda_stage.base_url}"
+}
+
+output "production_base_url" {
+  value = "${data.terraform_remote_state.lambda_production.base_url}"
 }
