@@ -38,6 +38,8 @@ import getSentiment from './lib/getSentiment'
 import postSentiment from './lib/postSentiment'
 import getAggregateSentiment from './lib/getAggregateSentiment'
 import getFeed from './lib/getFeed'
+import postPushToken from './lib/postPushToken'
+
 import {createLambda} from './lib/lambda'
 
 
@@ -45,3 +47,4 @@ module.exports.getSentiment = createLambda(getSentiment(db))
 module.exports.postSentiment = createLambda(postSentiment(db))
 module.exports.getSentimentAggregate = createLambda(getAggregateSentiment(db))
 module.exports.getFeed = createLambda(getFeed(esIface))
+module.exports.postPushToken = createLambda(postPushToken)
