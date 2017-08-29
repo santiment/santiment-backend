@@ -2,23 +2,26 @@
   "name": "SentimentService",
   "version": "v1.1",
   "devDependencies": {
-    "aws-sdk": "^2.41.0",
-    "babel-core": "^6.24.1",
-    "babel-loader": "^7.0.0",
+    "aws-sdk": "^2.105.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
     "babel-plugin-syntax-flow": "^6.18.0",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-preset-es2015": "^6.24.1",
+    "db-migrate": "^0.10.0-beta.23",
+    "db-migrate-pg": "^0.2.5",
     "jest": "^20.0.4",
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
-    "elasticsearch": "^13.0.1",
-    "fluture": "^5.0.0",
-    "folktale": "^2.0.0-alpha4",
-    "metamagical-interface": "^3.4.0",
+    "elasticsearch": "^13.3.1",
+    "fluture": "^7.1.2",
+    "folktale": "^2.0.1",
+    "metamagical-interface": "^3.5.0",
     "metamagical-repl": "^0.3.0",
     "moment": "^2.18.1",
-    "ramda": "^0.23.0",
-    "sanctuary": "^0.12.2"
+    "pg": "^7.2.0",
+    "ramda": "^0.24.1",
+    "sanctuary": "^0.13.2"
   }
 }

@@ -1,0 +1,10 @@
+{
+  "dev": {
+    "driver": "pg",
+    "user": "push",
+    "password": "push",
+    "host": "localhost",
+    "database": "santiment",
+    "schema" :  "push_notifications"
+  }
+}

@@ -7,6 +7,7 @@ const defaultConfig = {
   ELASTICSEARCH_PORT:"9200",
   ELASTICSEARCH_HOST:null, //Needs to be provided from environment
   DYNAMODB_PREFIX:null
+  PG_URL:null
 }
 const config = merge(defaultConfig, process.env)
 
