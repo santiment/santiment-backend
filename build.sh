@@ -19,6 +19,7 @@ rm -rf $tmp/*
 
 webpack --output-path $tmp --output-filename handler.js
 
+
 cp $src/package.json $tmp
 cp $src/yarn.lock $tmp
 cd $tmp
@@ -43,5 +44,9 @@ aws lambda update-function-code --function-name ${ENV}-getSentimentAggregate\
     --s3-key lambda/${ENV}/lambda.zip
 
 aws lambda update-function-code --function-name ${ENV}-getFeed\
+    --s3-bucket santiment-private\
+    --s3-key lambda/${ENV}/lambda.zip
+
+aws lambda update-function-code --function-name ${ENV}-postPushToken\
     --s3-bucket santiment-private\
     --s3-key lambda/${ENV}/lambda.zip

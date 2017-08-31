@@ -19,7 +19,7 @@ const PG = require('./lib/pg')
 //invocation
 
 if (global.pg != null) {
-  global.pg = PG(PG_URL)
+  global.pg = PG(config.PG_URL)
 }
 
 import postPushToken from './lib/postPushToken'
